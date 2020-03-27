@@ -1,0 +1,3 @@
+export KUBE_PS1_SYMBOL_ENABLE=false
+export KUBE_PS1_PREFIX=''
+export KUBE_PS1_SUFFIX=''

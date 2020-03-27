@@ -3,14 +3,14 @@ call plug#begin('~/.vim/plugged')
 Plug 'junegunn/fzf.vim'
 Plug '/usr/local/opt/fzf'
 Plug 'scrooloose/nerdtree'
-Plug 'whatyouhide/vim-gotham'
+Plug 'romainl/apprentice'
 Plug 'ervandew/supertab'
 Plug 'fatih/vim-go', { 'for': 'go', 'do': ':GoInstallBinaries', 'tag': 'v1.19' }
 Plug 'python-mode/python-mode', { 'for': 'python' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive', { 'tag': 'v2.5' }
 Plug 'tpope/vim-surround'
-Plug 'vim-airline/vim-airline'
+Plug 'itchyny/lightline.vim'
 Plug 'w0rp/ale'
 call plug#end()
 
@@ -55,7 +55,7 @@ else
 	set t_Co=256
 endif
 set background=dark
-colorscheme gotham
+colorscheme apprentice
 set list                        " show invisible characters
 set listchars=""                " reset the listchars
 set listchars+=tab:▸\           " show tabs as ▸
@@ -99,6 +99,51 @@ function! s:build_go_files()
   endif
 endfunction
 
+" lightline
+set laststatus=2
+set noshowmode
+
+let g:lightline = {
+  \ 'colorscheme': 'apprentice',
+  \ 'active': {
+  \   'left': [[], ['paste', 'spell'], ['filename']],
+  \   'right': [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']]
+  \ },
+  \ 'component_function': {
+  \   'branch': 'fugitive#head',
+  \   'fileencoding': 'LightlineFileencoding',
+  \   'fileformat': 'LightlineFileformat',
+  \   'filename': 'LightlineFilename',
+  \   'filetype': 'LightlineFiletype'
+  \ },
+  \ }
+
+function! LightlineReadonly()
+  return &ft !~? 'help\|fugitive\|git' && &readonly ? '🔒' : ''
+endfunction
+
+function! LightlineModified()
+  return &ft =~ 'help\|fugitive\|git' ? '' : &modified ? '[+]' : &modifiable ? '' : '[-]'
+endfunction
+
+function! LightlineFilename()
+  return  ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+        \ ('' != expand('%') ? expand('%') : '[No Name]') .
+        \ ('' != LightlineModified() ? LightlineModified() : '')
+endfunction
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : '-') : ''
+endfunction
+
+function! LightlineFileencoding()
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
 " ---------- PLUGINS ----------
 " -----------------------------
 " fzf
@@ -117,16 +162,12 @@ let g:pymode_breakpoint_bind = '<leader>rb'
 let g:pymode_doc = 0
 let g:pymode_options_max_line_length = 100
 let g:pymode_rope = 1
-let g:pymode_rope_goto_definition_bind = '<leader>rg'
+let g:pymode_rope_goto_definition_bind = '<leader>rgd'
 let g:pymode_rope_regenerate_on_write = 0
 let g:pymode_rope_rename_bind = '<leader>rr'
 let g:pymode_rope_show_doc_bind = ''
 let g:pymode_run = 0
 let g:pymode_lint = 0
-
-" neovim
-let g:python_host_prog = '/Users/carolindohmen/.virtualenvs/p2/bin/python'
-let g:python3_host_prog = '/Users/carolindohmen/.virtualenvs/p3/bin/python'
 
 " NERDtree
 map <C-n> :NERDTreeToggle<CR>
@@ -139,7 +180,6 @@ map <leader>gd :Gvdiff<CR>
 " ale
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
-let g:airline#extensions#ale#enabled = 1 "enable integration with airline
 
 " vim-go
 let g:go_highlight_build_constraints = 1
@@ -153,7 +193,7 @@ let g:go_highlight_types = 1
 let g:go_auto_sameids = 0
 let g:go_fmt_command = "goimports"
 let g:go_metalinter_autosave = 1
-let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck', 'structcheck']
+let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
 let g:go_metalinter_autosave_enabled = ['vet', 'golint']
 let g:go_addtags_transform = "snakecase"
 let g:go_def_mode = "godef"

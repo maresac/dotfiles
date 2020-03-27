@@ -1,0 +1,45 @@
+[user]
+	name = Carolin Dohmen
+
+[alias]
+	amend = commit --amend
+	latest = for-each-ref --sort=-committerdate --format='%(committerdate:short) %(refname:short)'
+	uncommit = reset --soft HEAD^
+	unstage = reset HEAD
+
+[color]
+	ui = true
+
+[commit]
+	gpgsign = true
+
+[core]
+	excludesfile = ~/.gitignore.local
+	pager = diff-so-fancy | less --tabs=4 -RFX
+
+[merge]
+	conflictstyle = diff3
+	ff = false
+	summary = true
+	tool = vimdiff
+	verbosity = 1
+
+[mergetool]
+	keepBackup = false
+	prompt = false
+
+[fetch]
+	prune = true
+
+[pull]
+	rebase = true
+
+[push]
+	default = simple
+	followTags = true
+
+[rerere]
+	enabled = true
+
+[include]
+	path = ~/.gitconfig.local
